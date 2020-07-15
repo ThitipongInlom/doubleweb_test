@@ -1,4 +1,5 @@
 <?php
+include 'server/csrf.php';
 $csrf = new csrf();
 
 // Generate Token Id and Valid Register

@@ -1,6 +1,5 @@
 <?php
 session_start();
-include 'server/csrf.php';
 include 'server/register.php';
 ?>
 <!doctype html>
@@ -24,7 +23,7 @@ include 'server/register.php';
     <div class="container-fluid">
         <div class="row py-5">
             <div class="offset-4 offset-sm-4 offset-md-4 offset-lg-4 col-4 col-sm-4 col-md-4 col-lg-4">
-                <div class="card card-danger">
+                <div class="card card-danger form">
                     <div class="card-header">
                         <h3 class="card-title text-center mb-0">Login APP</h3>
                     </div>
