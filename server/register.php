@@ -1,17 +1,24 @@
 <?php
-include 'server/csrf.php';
+session_start();
+include '../server/csrf.php';
 $csrf = new csrf();
-
-// Generate Token Id and Valid Register
-$token_id = $csrf->get_token_id();
-$token_value = $csrf->get_token($token_id);
-
-// Generate Random Form Register
 $register = array('username',
                   'password',
                   'fristname',
                   'lastname',
                   'phone'
             );
-
 $form_names = $csrf->form_names($register, false);
+
+if($csrf->check_valid('post')) {
+    $user = $_POST[$form_names['username']];
+    echo $user;
+    echo '<br>';
+    $hash = password_hash("rasmuslerdorf", PASSWORD_DEFAULT);
+
+    if (password_verify('rasmuslerdorf', $hash)) {
+        echo 'Password is valid!';
+    } else {
+        echo 'Invalid password.';
+    }
+}

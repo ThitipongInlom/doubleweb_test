@@ -4,23 +4,67 @@ var Show_register = function Show_register() {
         backdrop: 'static',
         show: true
     })
+
+    $('#register').on('hidden.bs.modal', function (e) {
+        console.log('Register Hide')
+        $("#register_username").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#register_password").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#register_fristname").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#register_lastname").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#register_phone").removeClass('is-valid').removeClass('is-invalid').val('');
+    })
 }
 
 var Save_register = function Save_register() {
     console.log('Save Regiser')
-    var Data = new FormData();
-    Data.append('username', $("#register_username").val())
-    Data.append($("#from_id").attr('name'), $("#from_id").val())
-    $.ajax({
-        type: 'POST',
-        url: 'server/test.php',
-        dataType: 'json',
-        cache: false,
-        contentType: false,
-        processData: false,
-        data: Data,
-        success: function (result) {
-            console.log(result);
+    var Array_id = ['from_id',
+                    'register_username',
+                    'register_password',
+                    'register_fristname',
+                    'register_lastname',
+                    'register_phone'
+    ];
+    var Check_input = Check_null_input(Array_id);
+    if (Check_input == true) {
+        var Data = new FormData();
+        $(Array_id).each(function (index, value) {
+            Data.append($("#" + value).attr('name'), $("#" + value).val());
+        });
+        $.ajax({
+            type: 'POST',
+            url: 'server/register.php',
+            dataType: 'json',
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: Data,
+            success: function (result) {
+                console.log(result);
+            }
+        });
+    }else {
+
+    }
+}
+
+var Check_null_input = function Check_null_input(Array_id) {
+    var success_rows = 0;
+    var error_rows = 0;
+
+    $(Array_id).each(function (index, value) {
+        function Check_null_Input() {
+            if ($("#" + value).val() == '') {
+                $("#" + value).removeClass('is-valid');
+                $("#" + value).addClass('is-invalid');
+                return false;
+            } else {
+                $("#" + value).removeClass('is-invalid');
+                $("#" + value).addClass('is-valid');
+                return true;
+            }
         }
+        var Check_null_Input = Check_null_Input() == true ? success_rows++ : error_rows++;
     });
+    var result = success_rows == Array_id.length ? true : false;
+    return result;
 }

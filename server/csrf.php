@@ -21,7 +21,6 @@ class Csrf
 			$_SESSION['token_value'] = $token;
 			return $token;
 		}
-
 	}
 
 	public function check_valid($method) {
