@@ -17,12 +17,13 @@ var Show_register = function Show_register() {
 
 var Save_register = function Save_register() {
     console.log('Save Regiser')
-    var Array_id = ['from_id',
-                    'register_username',
-                    'register_password',
-                    'register_fristname',
-                    'register_lastname',
-                    'register_phone'
+    var Array_id = [
+        'from_id',
+        'register_username',
+        'register_password',
+        'register_fristname',
+        'register_lastname',
+        'register_phone'
     ];
     var Check_input = Check_null_input(Array_id);
     if (Check_input == true) {
@@ -39,11 +40,24 @@ var Save_register = function Save_register() {
             processData: false,
             data: Data,
             success: function (result) {
-                console.log(result);
+                $("#register").modal('hide');
             }
         });
     }else {
+        console.log('ข้อมูลยังไม่ครบ')
+    }
+}
 
+var Check_password_special = function Check_password_special(e) {
+    // เช็คห้ามใช้อักษร พิเศษ
+    if (!e.value.match(/^[ก-ฮa-z0-9]+$/i) && e.value.length > 0) {
+        $(e).addClass('is-invalid');
+        $("#btn_login").addClass('disabled').attr('disabled', 'disabled');
+        $("#btn_register").addClass('disabled').attr('disabled', 'disabled');
+    }else {
+        $(e).removeClass('is-invalid');
+        $("#btn_login").removeClass('disabled').removeAttr('disabled');
+        $("#btn_register").removeClass('disabled').removeAttr('disabled');
     }
 }
 
