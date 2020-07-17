@@ -114,7 +114,7 @@ include 'server/set_csrf.php';
                                                     <th>Fristname</th>
                                                     <th>Lastname</th>
                                                     <th>Phone Number</th>
-                                                    <th width="25%">Action</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>

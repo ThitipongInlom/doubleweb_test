@@ -23,9 +23,9 @@ $(document).ready(function () {
         }, {
             "data": '4',
             "render": function (data, type, full, meta) {
-                var btn_r = '<button class="btn btn-sm btn-info" member_id="' + data + '" ><i class="fas fa-search"></i> ดูข้อมูล</button>';
-                var btn_u = '<button class="btn btn-sm btn-warning" member_id="' + data + '" ><i class="fas fa-edit"></i> แก้ไขข้อมูล</button>';
-                var btn_d = '<button class="btn btn-sm btn-danger" member_id="' + data + '" ><i class="fas fa-trash"></i> ลบข้อมูล</button>';
+                var btn_r = '<button class="btn btn-sm btn-outline-info" member_id="' + data + '" ><i class="fas fa-search"></i></button>';
+                var btn_u = '<button class="btn btn-sm btn-outline-warning" member_id="' + data + '" ><i class="fas fa-edit"></i></button>';
+                var btn_d = '<button class="btn btn-sm btn-outline-danger" member_id="' + data + '" ><i class="fas fa-trash"></i></button>';
                 return btn_r + ' '+ btn_u +' ' + btn_d;
             }
         }],
