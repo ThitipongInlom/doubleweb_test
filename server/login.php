@@ -2,7 +2,7 @@
 session_start();
 include '../server/connection.php';
 include '../server/csrf.php';
-$date_now = date('Y-m-d h:i:s');
+$date_now = date('Y-m-d H:i:s');
 $csrf = new csrf();
 $login = array(
     'username',

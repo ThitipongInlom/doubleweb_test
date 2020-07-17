@@ -2,7 +2,7 @@ $(document).ready(function () {
     $("#login_password").keyup(function (event) {
         if (event.keyCode === 13) {
             if ($("#btn_login").attr('disabled') == 'disabled') {
-                console.log('มีอักษรพิเศษ')
+                // มีอักษรพิเศษ
             }else {
                 $("#btn_login").click();
             }
@@ -11,7 +11,7 @@ $(document).ready(function () {
 });
 
 var Save_login = function Save_login() {
-    console.log('User Login')
+    var Toast = Set_Toast();
     var Array_id = [
         'from_id',
         'login_username',
@@ -35,13 +35,18 @@ var Save_login = function Save_login() {
                 if (result.status == 200) {
                     location.replace("crud.php");
                 }else {
-
+                    Toast.fire({
+                        icon: 'error',
+                        title: result.mag
+                    })
                 }
-                console.log(result);
             }
         });
     } else {
-        console.log('ข้อมูลยังไม่ครบ')
+        Toast.fire({
+            icon: 'error',
+            title: 'ข้อมูลยังไม่ครบ'
+        })
     }
 }
 
@@ -65,4 +70,20 @@ var Check_null_input = function Check_null_input(Array_id) {
     });
     var result = success_rows == Array_id.length ? true : false;
     return result;
+}
+
+var Set_Toast = function Set_Toast() {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
+    return Toast
 }

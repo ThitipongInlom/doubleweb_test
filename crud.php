@@ -18,11 +18,14 @@ include 'server/set_csrf.php';
     <link rel="stylesheet" href="assets/adminlte/css/adminlte.css">
     <link rel="stylesheet" href="assets/fontawesome/css/all.css">
     <link rel="stylesheet" href="assets/datatables/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="assets/sweetalert2/sweetalert2.min.css">
 
     <title>CRUD Ajax</title>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+    <input type="hidden" name="<?= $token_id; ?>" id="from_id" value="<?= $token_value; ?>">
+    <input type="hidden" name="<?= $form_names['player_id']; ?>" id="player_id">
     <div class="wrapper">
 
         <!-- Navbar -->
@@ -96,18 +99,18 @@ include 'server/set_csrf.php';
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="card card-primary">
+                            <div class="card card-dark">
                                 <div class="card-header pb-2">
                                     <h2 class="card-title">
                                         <i class="fas fa-table"></i> ตารางข้อมูล Player
                                     </h2>
                                     <div class="card-tools">
-                                        <button type="button" class="btn btn-sm btn-success"><i class="fas fa-user-plus"></i> สร้างข้อมูล</button>
+                                        <button type="button" class="btn btn-sm btn-success" onclick="Create_data_modal(this)"><i class="fas fa-user-plus"></i> สร้างข้อมูล</button>
                                     </div>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table id="example" class="table table-sm table-striped table-bordered" style="width:100%">
+                                        <table id="member_table" class="table table-sm table-striped table-bordered" style="width:100%">
                                             <thead>
                                                 <tr>
                                                     <th>Username</th>
@@ -146,6 +149,248 @@ include 'server/set_csrf.php';
             <!-- Default to the left -->
             <strong>Copyright &copy; 2020 <a href="https://github.com/ThitipongInlom" target="_bank">Thitipong Inlom</a>.</strong> All rights reserved.
         </footer>
+
+        <!-- Modal create -->
+        <div class="modal fade" id="create_data_modal" tabindex="-1" role="dialog" aria-labelledby="create_data_modalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark">
+                        <h5 class="modal-title" id="create_data_modalLabel"><i class="fas fa-user-plus"></i> Create Data</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="timeline mb-0">
+                                    <div>
+                                        <i class="fas fa-user bg-blue"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="create_username">Username</label>
+                                                <input type="text" class="form-control form-control-sm" name="<?= $form_names['username']; ?>" id="create_username" placeholder="Username" autocomplete="off">
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-lock bg-cyan"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="create_password">Password</label>
+                                                <input type="text" class="form-control form-control-sm" name="<?= $form_names['password']; ?>" id="create_password" onkeyup="Check_password_special(this)" placeholder="Password" autocomplete="off">
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-address-card bg-green"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <div class="row">
+                                                    <div class="col-6 col-sm-6 col-md-6 col-lg-6">
+                                                        <label for="create_fristname">Frist Name</label>
+                                                        <input type="text" class="form-control form-control-sm" name="<?= $form_names['fristname']; ?>" id="create_fristname" placeholder="Frist Name">
+                                                    </div>
+                                                    <div class="col-6 col-sm-6 col-md-6 col-lg-6">
+                                                        <label for="create_lastname">Last Name</label>
+                                                        <input type="text" class="form-control form-control-sm" name="<?= $form_names['lastname']; ?>" id="create_lastname" placeholder="Last Name">
+                                                    </div>
+                                                </div>
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-phone bg-maroon"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="create_phone">Phone</label>
+                                                <input type="number" class="form-control form-control-sm" name="<?= $form_names['phone']; ?>" id="create_phone" placeholder="Phone">
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-inline">
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-sm btn-block btn-danger" data-dismiss="modal">ยกเลิก</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-sm btn-block btn-success" id="btn_create" onclick="Save_Create()">เพิ่มสมาชิก</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal View -->
+        <div class="modal fade" id="view_data_modal" tabindex="-1" role="dialog" aria-labelledby="view_data_modalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark">
+                        <h5 class="modal-title" id="view_data_modalLabel"><i class="fas fa-search"></i> View Info</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="timeline mb-0">
+                                    <div class="time-label">
+                                        <span class="bg-primary create_user">วันเวลาที่สร้าง Username</span>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-user bg-blue"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header username">Username :</h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-address-card bg-green"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header name">Name :</h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-phone bg-maroon"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header phone">Phone :</h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-sticky-note bg-gray"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header note">Note :</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-block btn-danger" data-dismiss="modal"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Edit -->
+        <div class="modal fade" id="edit_data_modal" tabindex="-1" role="dialog" aria-labelledby="edit_data_modalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark">
+                        <h5 class="modal-title" id="edit_data_modalLabel"><i class="fas fa-edit"></i> Edit Data</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="timeline mb-0">
+                                    <div>
+                                        <i class="fas fa-user bg-blue"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="edit_username">Username</label>
+                                                <input type="text" class="form-control form-control-sm" name="<?= $form_names['username']; ?>" id="edit_username" disabled placeholder="Username" autocomplete="off">
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-lock bg-cyan"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="edit_password">Password</label>
+                                                <input type="text" class="form-control form-control-sm" name="<?= $form_names['password']; ?>" id="edit_password" onkeyup="Check_password_special(this)" placeholder="Password" autocomplete="off">
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-address-card bg-green"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <div class="row">
+                                                    <div class="col-6 col-sm-6 col-md-6 col-lg-6">
+                                                        <label for="edit_fristname">Frist Name</label>
+                                                        <input type="text" class="form-control form-control-sm" name="<?= $form_names['fristname']; ?>" id="edit_fristname" placeholder="Frist Name">
+                                                    </div>
+                                                    <div class="col-6 col-sm-6 col-md-6 col-lg-6">
+                                                        <label for="edit_lastname">Last Name</label>
+                                                        <input type="text" class="form-control form-control-sm" name="<?= $form_names['lastname']; ?>" id="edit_lastname" placeholder="Last Name">
+                                                    </div>
+                                                </div>
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-phone bg-maroon"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="edit_phone">Phone</label>
+                                                <input type="number" class="form-control form-control-sm" name="<?= $form_names['phone']; ?>" id="edit_phone" placeholder="Phone">
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-sticky-note bg-gray"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="edit_note">Note</label>
+                                                <textarea class="form-control" name="<?= $form_names['note']; ?>" id="edit_note" placeholder="Note" rows="3"></textarea>
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-inline">
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-sm btn-block btn-danger" data-dismiss="modal">ยกเลิก</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-sm btn-block btn-success" id="btn_edit" onclick="Save_Edit(this)">แก้ไขข้อมูล</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Delete -->
+        <div class="modal fade" id="delete_data_modal" tabindex="-1" role="dialog" aria-labelledby="delete_data_modalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark">
+                        <h5 class="modal-title" id="delete_data_modalLabel"><i class="fas fa-trash"></i> Delete Data</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="callout callout-danger mb-0">
+                            <h5><i class="icon fas fa-exclamation-triangle"></i> แจ้งเตือนก่อนลบข้อมูล</h5>
+
+                            <p>ยืนยันเพื่อลบข้อมูล เมื่อลบข้อมูลแล้วไม่สามารถนำข้อมูลเดิมกลับมาได้</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-inline">
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-sm btn-block btn-warning" data-dismiss="modal">ยกเลิก</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-sm btn-block btn-danger" id="btn_delete" onclick="Save_Delete(this)">ลบข้อมูล</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </body>
 <!-- Flie JS -->
@@ -155,6 +400,9 @@ include 'server/set_csrf.php';
 <script src="assets/adminlte/js/adminlte.min.js"></script>
 <script src="assets/datatables/datatables/jquery.dataTables.min.js"></script>
 <script src="assets/datatables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/moment/moment.min.js"></script>
+<script src="assets/moment/locale/th.js"></script>
+<script src="assets/sweetalert2/sweetalert2.min.js"></script>
 <!-- Script JS -->
 <script src="script/crud.js"></script>
 

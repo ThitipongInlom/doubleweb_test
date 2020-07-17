@@ -1,6 +1,6 @@
 var Show_register = function Show_register() {
-    console.log('Register Show')
     $('#register').modal({
+        keyboard: false,
         backdrop: 'static',
         show: true
     })
@@ -16,7 +16,7 @@ var Show_register = function Show_register() {
 }
 
 var Save_register = function Save_register() {
-    console.log('Save Regiser')
+    var Toast = Set_Toast();
     var Array_id = [
         'from_id',
         'register_username',
@@ -40,11 +40,25 @@ var Save_register = function Save_register() {
             processData: false,
             data: Data,
             success: function (result) {
-                $("#register").modal('hide');
+                if (result.status == '200') {
+                    $("#register").modal('hide');
+                    Toast.fire({
+                        icon: 'success',
+                        title: result.mag
+                    })
+                }else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: result.mag
+                    })
+                }
             }
         });
     }else {
-        console.log('ข้อมูลยังไม่ครบ')
+        Toast.fire({
+            icon: 'error',
+            title: 'ข้อมูลยังไม่ครบ'
+        })
     }
 }
 
@@ -81,4 +95,20 @@ var Check_null_input = function Check_null_input(Array_id) {
     });
     var result = success_rows == Array_id.length ? true : false;
     return result;
+}
+
+var Set_Toast = function Set_Toast() {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
+    return Toast
 }
