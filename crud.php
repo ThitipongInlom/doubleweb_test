@@ -152,7 +152,7 @@ include 'server/set_csrf.php';
 
         <!-- Modal create -->
         <div class="modal fade" id="create_data_modal" tabindex="-1" role="dialog" aria-labelledby="create_data_modalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header bg-dark">
                         <h5 class="modal-title" id="create_data_modalLabel"><i class="fas fa-user-plus"></i> Create Data</h5>
@@ -228,7 +228,7 @@ include 'server/set_csrf.php';
 
         <!-- Modal View -->
         <div class="modal fade" id="view_data_modal" tabindex="-1" role="dialog" aria-labelledby="view_data_modalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header bg-dark">
                         <h5 class="modal-title" id="view_data_modalLabel"><i class="fas fa-search"></i> View Info</h5>
@@ -277,7 +277,7 @@ include 'server/set_csrf.php';
 
         <!-- Modal Edit -->
         <div class="modal fade" id="edit_data_modal" tabindex="-1" role="dialog" aria-labelledby="edit_data_modalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header bg-dark">
                         <h5 class="modal-title" id="edit_data_modalLabel"><i class="fas fa-edit"></i> Edit Data</h5>
@@ -362,7 +362,7 @@ include 'server/set_csrf.php';
 
         <!-- Modal Delete -->
         <div class="modal fade" id="delete_data_modal" tabindex="-1" role="dialog" aria-labelledby="delete_data_modalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header bg-dark">
                         <h5 class="modal-title" id="delete_data_modalLabel"><i class="fas fa-trash"></i> Delete Data</h5>

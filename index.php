@@ -19,37 +19,38 @@ include 'server/set_csrf.php';
     <title>ทดสอบ Login Ajax</title>
 </head>
 
-<body class="login-page">
+<body class="hold-transition login-page" style="background-image: url('assets/image/background.jpg'); height: auto; min-height: 100%;">
     <input type="hidden" name="<?= $token_id; ?>" id="from_id" value="<?= $token_value; ?>">
     <!-- Login App -->
     <div class="container-fluid">
         <div class="row py-5">
             <div class="offset-1 offset-sm-1 offset-md-4 offset-lg-4 col-10 col-sm-10 col-md-4 col-lg-4">
-                <div class="card card-primary form">
-                    <div class="card-header">
-                        <h3 class="card-title text-center mb-0">Login APP</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <div class="login-box">
+                    <div class="card card_login">
+                        <div class="card-body login-card-body">
+                            <div class="text-center">
+                                <h2 class="text-dark">LOGIN AJAX</h2>
                             </div>
-                            <input type="username" class="form-control" name="<?= $form_names['username']; ?>" id="login_username" onkeyup="Check_password_special(this)" placeholder="Username" autocomplete="off">
-                        </div>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <hr calss="mb-3">
+                            <div class="input-group mb-3 mt-3">
+                                <input type="username" class="form-control" name="<?= $form_names['username']; ?>" id="login_username" onkeyup="Check_password_special(this)" placeholder="Username" autocomplete="off" autofocus>
+                                <div class="input-group-append input-group-text">
+                                    <i class="fas fa-user"></i>
+                                </div>
                             </div>
-                            <input type="password" class="form-control" name="<?= $form_names['password']; ?>" id="login_password" onkeyup="Check_password_special(this)" placeholder="Password" autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="card-footer clearfix">
-                        <div class="row">
-                            <div class="col-6">
-                                <button type="button" class="btn btn-sm btn-block btn-outline-warning" onclick="Show_register()"><i class="fas fa-registered"></i> สมัครสมาชิก</button>
+                            <div class="input-group mb-3">
+                                <input type="password" class="form-control" name="<?= $form_names['password']; ?>" id="login_password" onkeyup="Check_password_special(this)" placeholder="Password" autocomplete="off">
+                                <div class="input-group-append input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <button type="button" class="btn btn-sm btn-block btn-outline-success" id="btn_login" onclick="Save_login()"><i class="fas fa-sign-in-alt"></i> ล็อกอิน</button>
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-sm btn-block btn-outline-warning" onclick="Show_register()"><i class="fas fa-registered"></i> สมัครสมาชิก</button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-sm btn-block btn-outline-success" id="btn_login" onclick="Save_login()"><i class="fas fa-sign-in-alt"></i> ล็อกอิน</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -60,7 +61,7 @@ include 'server/set_csrf.php';
 
     <!-- Modal Register -->
     <div class="modal fade" id="register" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-dark">
                     <h5 class="modal-title" id="registerModalLabel"><i class="fas fa-user-plus"></i> สมัครสมาชิก</h5>

@@ -38,6 +38,7 @@ if (isset($_POST[$form_names['username']], $_POST[$form_names['password']])) {
                 ";
                 $conn->query($mysqli_login_success);
                 $_SESSION['player_isActive'] = '1';
+                $_SESSION['player_Member'] = $player_id;
 
                 $return = ['status' => '200', 'mag' => 'ล็อกอินเข้าสู่ระบบ สำเร็จ'];
                 echo json_encode($return);

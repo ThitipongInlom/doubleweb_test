@@ -153,12 +153,19 @@ var Save_Create = function Save_Create() {
             processData: false,
             data: Data,
             success: function (result) {
-                $("#create_data_modal").modal('hide');
-                $('#member_table').DataTable().draw();
-                Toast.fire({
-                    icon: 'success',
-                    title: result.mag
-                })
+                if (result.status == '200') {
+                    $("#create_data_modal").modal('hide');
+                    $('#member_table').DataTable().draw();
+                    Toast.fire({
+                        icon: 'success',
+                        title: result.mag
+                    })
+                }else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: result.mag
+                    })
+                }
             }
         });
     } else {
