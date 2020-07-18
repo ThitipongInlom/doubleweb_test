@@ -15,11 +15,20 @@ include 'server/set_csrf.php';
     <link rel="stylesheet" href="assets/adminlte/css/adminlte.css">
     <link rel="stylesheet" href="assets/fontawesome/css/all.css">
     <link rel="stylesheet" href="assets/sweetalert2/sweetalert2.min.css">
+    <style>
+        .background {
+            background-image: url('assets/image/background.jpg');
+            background-repeat: no-repeat;
+            background-position: center; 
+            background-size: cover; 
+            min-height: 100%;
+        }
+    </style>
 
     <title>ทดสอบ Login Ajax</title>
 </head>
 
-<body class="hold-transition login-page" style="background-image: url('assets/image/background.jpg'); height: auto; min-height: 100%;">
+<body class="hold-transition login-page background">
     <input type="hidden" name="<?= $token_id; ?>" id="from_id" value="<?= $token_value; ?>">
     <!-- Login App -->
     <div class="container-fluid">
