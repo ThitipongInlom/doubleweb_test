@@ -150,65 +150,68 @@ class SSP
      *    sql_exec() function
      *  @return string SQL where clause
      */
-    static function filter($request, $columns, &$bindings)
-    {
-        $globalSearch = array();
-        $columnSearch = array();
-        $dtColumns = self::pluck($columns, 'dt');
+ 	static function filter ( $request, $columns, &$bindings, $default = false )
+	{
+		$globalSearch = array();
+		$columnSearch = array();
+		$dtColumns = self::pluck( $columns, 'dt' );
 
-        if (isset($request['search']) && $request['search']['value'] != '') {
-            $str = $request['search']['value'];
+		if ( isset($request['search']) && $request['search']['value'] != '' ) {
+			$str = $request['search']['value'];
 
-            for ($i = 0, $ien = count($request['columns']); $i < $ien; $i++) {
-                $requestColumn = $request['columns'][$i];
-                $columnIdx = array_search($requestColumn['data'], $dtColumns);
-                $column = $columns[$columnIdx];
+			for ( $i=0, $ien=count($request['columns']) ; $i<$ien ; $i++ ) {
+				$requestColumn = $request['columns'][$i];
+				$columnIdx = array_search( $requestColumn['data'], $dtColumns );
+				$column = $columns[ $columnIdx ];
 
-                if ($requestColumn['searchable'] == 'true') {
-                    $binding = self::bind($bindings, '%' . $str . '%', PDO::PARAM_STR);
-                    $globalSearch[] = "`" . $column['db'] . "` LIKE " . $binding;
-                }
-            }
-        }
+				if ( $requestColumn['searchable'] == 'true' ) {
+					$binding = self::bind( $bindings, '%'.$str.'%', PDO::PARAM_STR );
+					$globalSearch[] = "`".$column['db']."` LIKE ".$binding;
+				}
+			}
+		}
 
-        // Individual column filtering
-        if (isset($request['columns'])) {
-            for ($i = 0, $ien = count($request['columns']); $i < $ien; $i++) {
-                $requestColumn = $request['columns'][$i];
-                $columnIdx = array_search($requestColumn['data'], $dtColumns);
-                $column = $columns[$columnIdx];
+		// Individual column filtering
+		for ( $i=0, $ien=count($request['columns']) ; $i<$ien ; $i++ ) {
+			$requestColumn = $request['columns'][$i];
+			$columnIdx = array_search( $requestColumn['data'], $dtColumns );
+			$column = $columns[ $columnIdx ];
 
-                $str = $requestColumn['search']['value'];
+			$str = $requestColumn['search']['value'];
 
-                if (
-                    $requestColumn['searchable'] == 'true' &&
-                    $str != ''
-                ) {
-                    $binding = self::bind($bindings, '%' . $str . '%', PDO::PARAM_STR);
-                    $columnSearch[] = "`" . $column['db'] . "` LIKE " . $binding;
-                }
-            }
-        }
+			if ( $requestColumn['searchable'] == 'true' &&
+			 $str != '' ) {
+				$binding = self::bind( $bindings, '%'.$str.'%', PDO::PARAM_STR );
+				$columnSearch[] = "`".$column['db']."` LIKE ".$binding;
+			}
+		}
 
-        // Combine the filters into a single string
-        $where = '';
+		// Combine the filters into a single string
+		$where = '';
 
-        if (count($globalSearch)) {
-            $where = '(' . implode(' OR ', $globalSearch) . ')';
-        }
+		if ( count( $globalSearch ) ) {
+			$where = '('.implode(' OR ', $globalSearch).')';
+		}
 
-        if (count($columnSearch)) {
-            $where = $where === '' ?
-                implode(' AND ', $columnSearch) :
-                $where . ' AND ' . implode(' AND ', $columnSearch);
-        }
+		if ( count( $columnSearch ) ) {
+			$where = $where === '' ?
+				implode(' AND ', $columnSearch) :
+				$where .' AND '. implode(' AND ', $columnSearch);
+		}
 
-        if ($where !== '') {
-            $where = 'WHERE ' . $where;
-        }
+		if($default !== false){
+			if($where !== '')
+				$where = $default . ' AND ' . $where;
+			else 
+				$where = $default; 
+		}
+		if ( $where !== '' ) {
+			$where = 'WHERE '.$where;
+		}
+		
 
-        return $where;
-    }
+		return $where;
+	}
 
 
     /**
@@ -225,57 +228,50 @@ class SSP
      *  @param  array $columns Column information array
      *  @return array          Server-side processing response array
      */
-    static function simple($request, $conn, $table, $primaryKey, $columns)
-    {
-        $bindings = array();
-        $db = self::db($conn);
 
-        // Build the SQL query string from the request
-        $limit = self::limit($request, $columns);
-        $order = self::order($request, $columns);
-        $where = self::filter($request, $columns, $bindings);
+	static function simple ( $request, $sql_details, $table, $primaryKey, $columns, $default = false )
+	{
+		$bindings = array();
+		$db = self::sql_connect( $sql_details );
 
-        // Main query to actually get the data
-        $data = self::sql_exec(
-            $db,
-            $bindings,
-            "SELECT `" . implode("`, `", self::pluck($columns, 'db')) . "`
+		// Build the SQL query string from the request
+		$limit = self::limit( $request, $columns );
+		$order = self::order( $request, $columns );
+		$where = self::filter( $request, $columns, $bindings, $default );
+
+		// Main query to actually get the data
+		$data = self::sql_exec( $db, $bindings,
+			"SELECT SQL_CALC_FOUND_ROWS `".implode("`, `", self::pluck($columns, 'db'))."`
 			 FROM `$table`
 			 $where
 			 $order
 			 $limit"
-        );
+		);
 
-        // Data set length after filtering
-        $resFilterLength = self::sql_exec(
-            $db,
-            $bindings,
-            "SELECT COUNT(`{$primaryKey}`)
-			 FROM   `$table`
-			 $where"
-        );
-        $recordsFiltered = $resFilterLength[0][0];
+		// Data set length after filtering
+		$resFilterLength = self::sql_exec( $db,
+			"SELECT FOUND_ROWS()"
+		);
+		$recordsFiltered = $resFilterLength[0][0];
 
-        // Total data set length
-        $resTotalLength = self::sql_exec(
-            $db,
-            "SELECT COUNT(`{$primaryKey}`)
-			 FROM   `$table`"
-        );
-        $recordsTotal = $resTotalLength[0][0];
+		// Total data set length
+		$resTotalLength = self::sql_exec( $db,
+			"SELECT COUNT(`{$primaryKey}`)
+			 FROM   `$table`".($default !== false ? ' WHERE '.$default : '')
+		);
+		$recordsTotal = $resTotalLength[0][0];
 
-        /*
+
+		/*
 		 * Output
 		 */
-        return array(
-            "draw"            => isset($request['draw']) ?
-                intval($request['draw']) :
-                0,
-            "recordsTotal"    => intval($recordsTotal),
-            "recordsFiltered" => intval($recordsFiltered),
-            "data"            => self::data_output($columns, $data)
-        );
-    }
+		return array(
+			"draw"            => intval( $request['draw'] ),
+			"recordsTotal"    => intval( $recordsTotal ),
+			"recordsFiltered" => intval( $recordsFiltered ),
+			"data"            => self::data_output( $columns, $data )
+		);
+	}
 
 
     /**
@@ -391,7 +387,7 @@ class SSP
     {
         try {
             $db = @new PDO(
-                "mysql:host={$sql_details['host']};dbname={$sql_details['db']}",
+                "mysql:host={$sql_details['host']};dbname={$sql_details['db']}; charset=utf8",
                 $sql_details['user'],
                 $sql_details['pass'],
                 array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)

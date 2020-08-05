@@ -9,7 +9,7 @@ $(document).ready(function () {
             ["10", "20", "ทั้งหมด"]
         ],
         "ajax": {
-            "url": 'server/datatables/server_processing.php',
+            "url": 'server/datatables/server_crud_blacklist.php',
             "type": 'get'
         },
         "columns": [{
@@ -22,11 +22,13 @@ $(document).ready(function () {
             "data": '3',
         }, {
             "data": '4',
+        }, {
+            "data": '5',
             "render": function (data, type, full, meta) {
                 var btn_r = '<button class="btn btn-sm btn-outline-info" member_id="' + data + '" onclick="view_data_modal(this)"><i class="fas fa-search"></i></button>';
                 var btn_u = '<button class="btn btn-sm btn-outline-warning" member_id="' + data + '" onclick="Edit_data_modal(this)"><i class="fas fa-edit"></i></button>';
                 var btn_d = '<button class="btn btn-sm btn-outline-danger" member_id="' + data + '" onclick="Delete_data_modal(this)"><i class="fas fa-trash"></i></button>';
-                return btn_r + ' '+ btn_u +' ' + btn_d;
+                return btn_r + ' ' + btn_u + ' ' + btn_d;
             }
         }],
         "language": {
@@ -55,88 +57,24 @@ var Create_data_modal = function Create_data_modal() {
     });
 
     $('#create_data_modal').on('hidden.bs.modal', function (e) {
-        console.log('Create Hide')
-        $("#create_username").removeClass('is-valid').removeClass('is-invalid').val('');
-        $("#create_password").removeClass('is-valid').removeClass('is-invalid').val('');
         $("#create_fristname").removeClass('is-valid').removeClass('is-invalid').val('');
         $("#create_lastname").removeClass('is-valid').removeClass('is-invalid').val('');
         $("#create_phone").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#create_bank").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#create_block_from").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#create_note").removeClass('is-valid').removeClass('is-invalid').val('');
     })
-}
-
-var view_data_modal = function view_data_modal(e) {
-    $("#view_data_modal").modal('show');
-    var Data = new FormData();
-    Data.append($("#player_id").attr('name'), $(e).attr('member_id'));
-    $.ajax({
-        type: 'POST',
-        url: 'server/crud.php?action=Get_user',
-        dataType: 'json',
-        cache: false,
-        contentType: false,
-        processData: false,
-        data: Data,
-        success: function (result) {
-            $('#view_data_modal .create_user').text(moment(result.data.create_time).format('DD/MM/YYYY H:mm:ss'))
-            $('#view_data_modal .username').text('Username : ' + result.data.player_username)
-            $('#view_data_modal .name').text('Name : ' + result.data.player_fristname + " " + result.data.player_lastname)
-            $('#view_data_modal .phone').text('Phone : ' + result.data.player_phone_number)
-            $('#view_data_modal .note').text('Note : ' + result.data.player_note)
-        }
-    });
-}
-
-var Edit_data_modal = function Edit_data_modal(e) {
-    $("#edit_data_modal").modal({
-        keyboard: false,
-        backdrop: 'static',
-        show: true
-    });
-    $("#btn_edit").attr('member_id', $(e).attr('member_id'));
-    var Data = new FormData();
-    Data.append($("#player_id").attr('name'), $(e).attr('member_id'));
-    $.ajax({
-        type: 'POST',
-        url: 'server/crud.php?action=Get_edit_user',
-        dataType: 'json',
-        cache: false,
-        contentType: false,
-        processData: false,
-        data: Data,
-        success: function (result) {
-            $('#edit_username').val(result.data.player_username)
-            $('#edit_password').val(result.data.player_plain_password)
-            $('#edit_fristname').val(result.data.player_fristname)
-            $('#edit_lastname').val(result.data.player_lastname)
-            $('#edit_phone').val(result.data.player_phone_number)
-            $('#edit_note').val(result.data.player_note)
-        }
-    });
-
-    $('#edit_data_modal').on('hidden.bs.modal', function (e) {
-        $("#edit_username").removeClass('is-valid').removeClass('is-invalid').val('');
-        $("#edit_password").removeClass('is-valid').removeClass('is-invalid').val('');
-        $("#edit_fristname").removeClass('is-valid').removeClass('is-invalid').val('');
-        $("#edit_lastname").removeClass('is-valid').removeClass('is-invalid').val('');
-        $("#edit_phone").removeClass('is-valid').removeClass('is-invalid').val('');
-        $("#edit_note").removeClass('is-valid').removeClass('is-invalid').val('');
-    })
-}
-
-var Delete_data_modal = function Delete_data_modal(e) {
-    $("#delete_data_modal").modal('show');
-    $("#btn_delete").attr('member_id', $(e).attr('member_id'));
 }
 
 var Save_Create = function Save_Create() {
     var Toast = Set_Toast();
     var Array_id = [
         'from_id',
-        'create_username',
-        'create_password',
         'create_fristname',
         'create_lastname',
-        'create_phone'
+        'create_phone',
+        'create_bank',
+        'create_block_from'
     ];
     var Check_input = Check_null_input(Array_id);
     if (Check_input == true) {
@@ -144,9 +82,10 @@ var Save_Create = function Save_Create() {
         $(Array_id).each(function (index, value) {
             Data.append($("#" + value).attr('name'), $("#" + value).val());
         });
+        Data.append($("#create_note").attr('name'), $("#create_note").val());
         $.ajax({
             type: 'POST',
-            url: 'server/register.php',
+            url: 'server/crud_blacklist.php?action=Save_black_list',
             dataType: 'json',
             cache: false,
             contentType: false,
@@ -160,7 +99,7 @@ var Save_Create = function Save_Create() {
                         icon: 'success',
                         title: result.mag
                     })
-                }else {
+                } else {
                     Toast.fire({
                         icon: 'error',
                         title: result.mag
@@ -176,15 +115,75 @@ var Save_Create = function Save_Create() {
     }
 }
 
+var view_data_modal = function view_data_modal(e) {
+    $("#view_data_modal").modal('show');
+    var Data = new FormData();
+    Data.append($("#player_id").attr('name'), $(e).attr('member_id'));
+    $.ajax({
+        type: 'POST',
+        url: 'server/crud_blacklist.php?action=Get_user',
+        dataType: 'json',
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: Data,
+        success: function (result) {
+            $('#view_data_modal .create_blacklist_date').text(moment(result.data.create_date).format('DD/MM/YYYY H:mm:ss'))
+            $('#view_data_modal .name').text('Name : ' + result.data.fristname + " " + result.data.lastname)
+            $('#view_data_modal .phone').text('Phone : ' + result.data.phone_number)
+            $('#view_data_modal .bank').text('Bank : ' + result.data.bank_number)
+            $('#view_data_modal .block_from').text('Bank : ' + result.data.block_from)
+            $('#view_data_modal .note').text('Note : ' + result.data.note)
+        }
+    });
+}
+
+var Edit_data_modal = function Edit_data_modal(e) {
+    $("#edit_data_modal").modal({
+        keyboard: false,
+        backdrop: 'static',
+        show: true
+    });
+    $("#btn_edit").attr('member_id', $(e).attr('member_id'));
+    var Data = new FormData();
+    Data.append($("#player_id").attr('name'), $(e).attr('member_id'));
+    $.ajax({
+        type: 'POST',
+        url: 'server/crud_blacklist.php?action=Get_edit_user',
+        dataType: 'json',
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: Data,
+        success: function (result) {
+            $('#edit_fristname').val(result.data.fristname)
+            $('#edit_lastname').val(result.data.lastname)
+            $('#edit_phone').val(result.data.phone_number)
+            $('#edit_bank').val(result.data.bank_number)
+            $('#edit_block_from').val(result.data.block_from)
+            $('#edit_note').val(result.data.note)
+        }
+    });
+
+    $('#edit_data_modal').on('hidden.bs.modal', function (e) {
+        $("#edit_fristname").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#edit_lastname").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#edit_phone").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#edit_bank").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#edit_block_from").removeClass('is-valid').removeClass('is-invalid').val('');
+        $("#edit_note").removeClass('is-valid').removeClass('is-invalid').val('');
+    })
+}
+
 var Save_Edit = function Save_Edit(e) {
     var Toast = Set_Toast();
     var Array_id = [
         'from_id',
-        'edit_password',
         'edit_fristname',
         'edit_lastname',
         'edit_phone',
-        'edit_note'
+        'edit_bank',
+        'edit_note',
     ];
     var Check_input = Check_null_input(Array_id);
     if (Check_input == true) {
@@ -193,9 +192,11 @@ var Save_Edit = function Save_Edit(e) {
             Data.append($("#" + value).attr('name'), $("#" + value).val());
         });
         Data.append($("#player_id").attr('name'), $(e).attr('member_id'));
+        Data.append($("#edit_block_from").attr('name'), $("#edit_block_from").val());
+        Data.append($("#edit_note").attr('name'), $("#edit_note").val());
         $.ajax({
             type: 'POST',
-            url: 'server/crud.php?action=Save_edit_user',
+            url: 'server/crud_blacklist.php?action=Save_edit_user',
             dataType: 'json',
             cache: false,
             contentType: false,
@@ -218,38 +219,32 @@ var Save_Edit = function Save_Edit(e) {
     }
 }
 
+var Delete_data_modal = function Delete_data_modal(e) {
+    $("#delete_data_modal").modal('show');
+    $("#btn_delete").attr('member_id', $(e).attr('member_id'));
+}
+
 var Save_Delete = function Save_Delete(e) {
     var Toast = Set_Toast();
     var Data = new FormData();
     Data.append($("#player_id").attr('name'), $(e).attr('member_id'));
-        $.ajax({
-            type: 'POST',
-            url: 'server/crud.php?action=Save_delete_user',
-            dataType: 'json',
-            cache: false,
-            contentType: false,
-            processData: false,
-            data: Data,
-            success: function (result) {
-                $("#delete_data_modal").modal('hide');
-                $('#member_table').DataTable().draw();
-                Toast.fire({
-                    icon: 'success',
-                    title: result.mag
-                })
-            }
-        });
-}
-
-var Check_password_special = function Check_password_special(e) {
-    // เช็คห้ามใช้อักษร พิเศษ
-    if (!e.value.match(/^[ก-ฮa-z0-9]+$/i) && e.value.length > 0) {
-        $(e).addClass('is-invalid');
-        $("#btn_create").addClass('disabled').attr('disabled', 'disabled');
-    } else {
-        $(e).removeClass('is-invalid');
-        $("#btn_create").removeClass('disabled').removeAttr('disabled');
-    }
+    $.ajax({
+        type: 'POST',
+        url: 'server/crud_blacklist.php?action=Save_delete_user',
+        dataType: 'json',
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: Data,
+        success: function (result) {
+            $("#delete_data_modal").modal('hide');
+            $('#member_table').DataTable().draw();
+            Toast.fire({
+                icon: 'success',
+                title: result.mag
+            })
+        }
+    });
 }
 
 var Check_null_input = function Check_null_input(Array_id) {

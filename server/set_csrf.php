@@ -14,7 +14,10 @@ $register = array(
       'fristname',
       'lastname',
       'phone',
-      'note'
+      'note',
+      'log_id',
+      'bank',
+      'block_from'
 );
             
 $form_names = $csrf->form_names($register, false);

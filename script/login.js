@@ -33,7 +33,7 @@ var Save_login = function Save_login() {
             data: Data,
             success: function (result) {
                 if (result.status == 200) {
-                    location.replace("crud.php");
+                    location.replace("member.php");
                 }else {
                     Toast.fire({
                         icon: 'error',

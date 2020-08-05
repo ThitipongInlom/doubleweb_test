@@ -20,9 +20,21 @@ if($_SERVER['REQUEST_METHOD'] === "POST") {
     // head
     $all_headers = getallheaders();
 
-    if (!empty($data->phone_number) || !empty($data->bank_number)) {
-        
-        $sql_seacrh = "SELECT * FROM blacklist_member WHERE is_delete != '1' AND  phone_number = '$data->phone_number' OR is_delete != '1' AND bank_number = '$data->bank_number'";
+    if (!empty($data->phone_number) OR !empty($data->bank_number)) {
+        // Phone Number
+        if (!empty($data->phone_number)) {
+            $phone_number = "is_delete != '1' AND  phone_number = '$data->phone_number'";
+        }else {
+            $phone_number = "";
+        }
+        // Bank Number
+        if (!empty($data->bank_number)) {
+            $bank_number  = "OR is_delete != '1' AND bank_number = '$data->bank_number'";
+        }else {
+            $bank_number  = "";
+        }
+        // Query
+        $sql_seacrh = "SELECT * FROM blacklist_member WHERE $phone_number $bank_number";
 
         if ($result = $conn->query($sql_seacrh)) {
             while ($obj = $result->fetch_object()) {

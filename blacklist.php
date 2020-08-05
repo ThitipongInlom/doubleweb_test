@@ -5,6 +5,7 @@ if (empty($_SESSION['player_isActive'])) {
 }
 include 'server/set_csrf.php';
 ?>
+
 <!doctype html>
 <html lang="en">
 
@@ -20,7 +21,7 @@ include 'server/set_csrf.php';
     <link rel="stylesheet" href="assets/datatables/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="assets/sweetalert2/sweetalert2.min.css">
 
-    <title>CRUD Ajax</title>
+    <title>CRUD Black List</title>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
@@ -46,7 +47,7 @@ include 'server/set_csrf.php';
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a href="#" class="brand-link text-center">
-                <span class="brand-text font-weight-light"><i class="fas fa-database"></i> CRUD Ajax</span>
+                <span class="brand-text font-weight-light"><i class="fas fa-database"></i> CRUD Dashboard</span>
             </a>
             <!-- Sidebar -->
             <div class="sidebar">
@@ -63,9 +64,15 @@ include 'server/set_csrf.php';
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="crud.php" class="nav-link active">
+                                    <a href="member.php" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>CRUD Ajax</p>
+                                        <p>CRUD Member</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="blacklist.php" class="nav-link active">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>CRUD Blacklist</p>
                                     </a>
                                 </li>
                             </ul>
@@ -82,11 +89,11 @@ include 'server/set_csrf.php';
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0 text-dark">อัพเดต ข้อมูล Player</h1>
+                            <h1 class="m-0 text-dark">ข้อมูล Black List</h1>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item active">CRUD Ajax</li>
+                                <li class="breadcrumb-item active">CRUD Black List</li>
                             </ol>
                         </div>
                     </div>
@@ -102,7 +109,7 @@ include 'server/set_csrf.php';
                             <div class="card card-dark">
                                 <div class="card-header pb-2">
                                     <h2 class="card-title">
-                                        <i class="fas fa-table"></i> ตารางข้อมูล Player
+                                        <i class="fas fa-table"></i> ตารางข้อมูล Black List
                                     </h2>
                                     <div class="card-tools">
                                         <button type="button" class="btn btn-sm btn-success" onclick="Create_data_modal(this)"><i class="fas fa-user-plus"></i> สร้างข้อมูล</button>
@@ -110,22 +117,24 @@ include 'server/set_csrf.php';
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table id="member_table" class="table table-sm table-striped table-bordered" style="width:100%">
+                                        <table id="member_table" class="table table-sm table-bordered" style="width:100%">
                                             <thead>
                                                 <tr>
-                                                    <th>Username</th>
                                                     <th>Fristname</th>
                                                     <th>Lastname</th>
-                                                    <th>Phone Number</th>
+                                                    <th>Phone</th>
+                                                    <th>Bank</th>
+                                                    <th>Block From</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                    <th>Username</th>
                                                     <th>Fristname</th>
                                                     <th>Lastname</th>
-                                                    <th>Phone Number</th>
+                                                    <th>Phone</th>
+                                                    <th>Bank</th>
+                                                    <th>Block From</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </tfoot>
@@ -147,7 +156,7 @@ include 'server/set_csrf.php';
                 <b>Version</b> 0.0.1
             </div>
             <!-- Default to the left -->
-            <strong>Copyright &copy; 2020 <a href="https://github.com/ThitipongInlom" target="_bank">Thitipong Inlom</a>.</strong> All rights reserved.
+            <strong>Copyright &copy; 2020 <a href="https://thaiz.org/" target="_bank">thaiz</a>.</strong> All rights reserved.
         </footer>
 
         <!-- Modal create -->
@@ -164,25 +173,7 @@ include 'server/set_csrf.php';
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="timeline mb-0">
-                                    <div>
-                                        <i class="fas fa-user bg-blue"></i>
-                                        <div class="timeline-item">
-                                            <h3 class="timeline-header">
-                                                <label for="create_username">Username</label>
-                                                <input type="text" class="form-control form-control-sm" name="<?= $form_names['username']; ?>" id="create_username" placeholder="Username" autocomplete="off">
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <i class="fas fa-lock bg-cyan"></i>
-                                        <div class="timeline-item">
-                                            <h3 class="timeline-header">
-                                                <label for="create_password">Password</label>
-                                                <input type="text" class="form-control form-control-sm" name="<?= $form_names['password']; ?>" id="create_password" onkeyup="Check_password_special(this)" placeholder="Password" autocomplete="off">
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <div>
+                                   <div>
                                         <i class="fas fa-address-card bg-green"></i>
                                         <div class="timeline-item">
                                             <h3 class="timeline-header">
@@ -208,6 +199,33 @@ include 'server/set_csrf.php';
                                             </h3>
                                         </div>
                                     </div>
+                                    <div>
+                                        <i class="fas fa-university bg-indigo"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="create_bank">Bank</label>
+                                                <input type="number" class="form-control form-control-sm" name="<?= $form_names['bank']; ?>" id="create_bank" placeholder="Bank">
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-network-wired bg-teal"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="create_block_from">Block From</label>
+                                                <input type="text" class="form-control form-control-sm" name="<?= $form_names['block_from']; ?>" id="create_block_from" placeholder="Block From">
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-sticky-note bg-gray"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="edit_note">Note</label>
+                                                <textarea class="form-control" name="<?= $form_names['note']; ?>" id="create_note" placeholder="Note" rows="3"></textarea>
+                                            </h3>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -218,7 +236,7 @@ include 'server/set_csrf.php';
                                 <button type="button" class="btn btn-sm btn-block btn-danger" data-dismiss="modal">ยกเลิก</button>
                             </div>
                             <div class="col-6">
-                                <button type="button" class="btn btn-sm btn-block btn-success" id="btn_create" onclick="Save_Create()">เพิ่มสมาชิก</button>
+                                <button type="button" class="btn btn-sm btn-block btn-success" id="btn_create" onclick="Save_Create()">เพิ่มข้อมูล</button>
                             </div>
                         </div>
                     </div>
@@ -238,13 +256,7 @@ include 'server/set_csrf.php';
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="timeline mb-0">
                                     <div class="time-label">
-                                        <span class="bg-primary create_user">วันเวลาที่สร้าง Username</span>
-                                    </div>
-                                    <div>
-                                        <i class="fas fa-user bg-blue"></i>
-                                        <div class="timeline-item">
-                                            <h3 class="timeline-header username">Username :</h3>
-                                        </div>
+                                        <span class="bg-primary create_blacklist_date">วันเวลาที่สร้าง Username</span>
                                     </div>
                                     <div>
                                         <i class="fas fa-address-card bg-green"></i>
@@ -256,6 +268,18 @@ include 'server/set_csrf.php';
                                         <i class="fas fa-phone bg-maroon"></i>
                                         <div class="timeline-item">
                                             <h3 class="timeline-header phone">Phone :</h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-university bg-indigo"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header bank">Bank :</h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-network-wired bg-teal"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header block_from">Block From :</h3>
                                         </div>
                                     </div>
                                     <div>
@@ -289,25 +313,7 @@ include 'server/set_csrf.php';
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="timeline mb-0">
-                                    <div>
-                                        <i class="fas fa-user bg-blue"></i>
-                                        <div class="timeline-item">
-                                            <h3 class="timeline-header">
-                                                <label for="edit_username">Username</label>
-                                                <input type="text" class="form-control form-control-sm" name="<?= $form_names['username']; ?>" id="edit_username" disabled placeholder="Username" autocomplete="off">
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <i class="fas fa-lock bg-cyan"></i>
-                                        <div class="timeline-item">
-                                            <h3 class="timeline-header">
-                                                <label for="edit_password">Password</label>
-                                                <input type="text" class="form-control form-control-sm" name="<?= $form_names['password']; ?>" id="edit_password" onkeyup="Check_password_special(this)" placeholder="Password" autocomplete="off">
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <div>
+                                   <div>
                                         <i class="fas fa-address-card bg-green"></i>
                                         <div class="timeline-item">
                                             <h3 class="timeline-header">
@@ -330,6 +336,24 @@ include 'server/set_csrf.php';
                                             <h3 class="timeline-header">
                                                 <label for="edit_phone">Phone</label>
                                                 <input type="number" class="form-control form-control-sm" name="<?= $form_names['phone']; ?>" id="edit_phone" placeholder="Phone">
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-university bg-indigo"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="edit_bank">Bank</label>
+                                                <input type="number" class="form-control form-control-sm" name="<?= $form_names['bank']; ?>" id="edit_bank" placeholder="Bank">
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-network-wired bg-teal"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">
+                                                <label for="edit_block_from">Block From</label>
+                                                <input type="text" class="form-control form-control-sm" name="<?= $form_names['block_from']; ?>" id="edit_block_from" placeholder="Block From">
                                             </h3>
                                         </div>
                                     </div>
@@ -404,6 +428,6 @@ include 'server/set_csrf.php';
 <script src="assets/moment/locale/th.js"></script>
 <script src="assets/sweetalert2/sweetalert2.min.js"></script>
 <!-- Script JS -->
-<script src="script/crud.js"></script>
+<script src="script/crud_blacklist.js"></script>
 
 </html>
