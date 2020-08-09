@@ -39,8 +39,9 @@ if($_SERVER['REQUEST_METHOD'] === "POST") {
         if (!empty($check_id)) {
             http_response_code(200);
             echo json_encode(array(
-                "status" => 0,
-                "message" => "Block"
+                "status" => 1,
+                "message" => "Block",
+                "url" => $block_from
             ));
         }else {
             http_response_code(200);
@@ -68,8 +69,9 @@ if($_SERVER['REQUEST_METHOD'] === "POST") {
         if (!empty($check_id)) {
             http_response_code(200);
             echo json_encode(array(
-                "status" => 0,
-                "message" => "Block"
+                "status" => 1,
+                "message" => "Block",
+                "url" => $block_from
             ));
         }else {
             http_response_code(200);
